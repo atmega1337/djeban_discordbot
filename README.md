@@ -11,7 +11,6 @@
 
 /skip - пропустить песню.
 
-
 /pause - поставить на паузу
 
 /resume - продолжить
@@ -19,7 +18,6 @@
 /join - добавить в войс чат
 
 /leave - выйти из войс часа
-
 
 /eban - отключить воспроизведение и включить djeban
 
@@ -31,6 +29,7 @@ pip install -r requirements.txt
 
 3. Установить [ffmpeg](https://ffmpeg.org/download.html):
 В windows: скачать и закинуть в одну из дирректорий PATH (например C:/Windows) или создать свою.
+
 В linux: sudo apt install ffmpeg
 
 4. Запустить main.py, будет создан файл config.ini
