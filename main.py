@@ -1,62 +1,12 @@
-from platform import platform
-import discord
-import os
-import asyncio
-import sys
-
-from discord.ext import commands
-from discord.utils import get
-from discord import FFmpegPCMAudio
-from discord import TextChannel
+import disnake
+from disnake.ext import commands
+from disnake import FFmpegPCMAudio
+from disnake.utils import get
 from youtube_dl import YoutubeDL
 
-# Файл конфига
-configfile=os.path.join(os.path.dirname(sys.argv[0]), 'config.ini')
-
-intents = discord.Intents.default() # Подключаем "Разрешения"
-intents.message_content = True
-bot = commands.Bot(command_prefix='/', intents=intents) 
+bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Game('test', status = disnake.Status.online))
 
 song_queue = []
-
-def createfile(path, lines):
-    with open(path, "w", encoding='utf-8') as file:
-        for  line in lines:
-            file.write(line + '\n')
-    file.close()
-
-def create_config(path):
-    print ('Create config file.')
-    lines = ['# Discord bot token', 'token = 12345']
-    createfile(path,lines)
-
-# Чтение конфига
-def read_config(path, parm):
-    # Проверяем наличия файла, если нету - создаем
-    if not os.path.isfile(path):
-        print('Config file not found. Create new file.')
-        create_config(configfile)
-        print('Config file parameters error, default config creation. Restart required. Press any button to exit.')
-        input()
-        sys.exit()
-    #Открываем файл
-    file = open(path, "r", encoding='utf-8')
-    #Перебираем значения
-    findcvars = False
-    for i in file.read().splitlines():
-        if i.startswith(parm):
-            cvar = i.lstrip(parm).lstrip().lstrip('=').lstrip() #Удаляем название квара, пробел, знак равно, пробел
-            findcvars = True
-    # Если нужного квара нету, пересоздаем конфиг
-    if not findcvars:
-        create_config(path)
-        print('Config file parameters error, default config creation. Restart required. Press any button to exit.')
-        input()
-        sys.exit()
-    # закрываем файл
-    file.close()
-    return cvar
-
 
 def playlistinfo():
     infolist = "Playlist:\n"
@@ -66,7 +16,19 @@ def playlistinfo():
     return(infolist)
 
 def addqueue(url=''):
-    YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
+    YDL_OPTIONS = {
+        'format': 'bestaudio/best',
+        'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
+        'restrictfilenames': True,
+        'noplaylist': True,
+        'nocheckcertificate': True,
+        'ignoreerrors': False,
+        'logtostderr': False,
+        'quiet': True,
+        'no_warnings': True,
+        'default_search': 'auto',
+        'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
+    }
     with YoutubeDL(YDL_OPTIONS) as ydl:
         info = ydl.extract_info(url, download=False)
     newelement = [info['title'], info['url']]
@@ -77,159 +39,111 @@ def playqueue(voice):
     if(song_queue):
         print(voice)
         FFMPEG_OPTIONS = {
-            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+            'before_options': '-nostdin',
+            'options': '-vn'
+        }
+        
         voice.play(FFmpegPCMAudio(song_queue[0][1], **FFMPEG_OPTIONS), after=lambda e: playqueue(voice))
         voice.is_playing()
         song_queue.pop(0)
-    
 
 
 @bot.event  # check if bot is ready
 async def on_ready():
-    print('Bot online')
+    print(f'\n\nLogged in as: {bot.user.name} - {bot.user.id}')
+    for guild in bot.guilds:
+        print('Server {}. Member Count : {}'.format(guild.name,guild.member_count))
 
 
-# С помощью декоратора создаём первую команду
-@bot.command()
-async def ping(ctx):
-    await ctx.send('pong')
+
+@bot.slash_command(description='Тест')
+async def ping(inter):
+    await inter.response.send_message('pong')
 
 
-# С помощью декоратора создаём первую команду
-@bot.command()
-async def test(ctx):
-    server = ctx.message.guild
-    print(server)
-    voice_client = server.voice_client
-    print(voice_client)
-    addqueue("https://www.youtube.com/watch?v=JAB3OJMLb4I")
-    chenal=ctx.author.voice.channel
-    print(chenal)
 
-@bot.command()
-async def eban(ctx):
-    if not ctx.message.guild.voice_client:
-        await ctx.author.voice.channel.connect()
-    
-    voice = get(bot.voice_clients, guild=ctx.guild)
-    song_queue.clear()
-    addqueue("https://www.youtube.com/watch?v=EqB72SBN1F8")
-    voice.stop()
-    playqueue(voice)
-
-
-@bot.command(pass_context = True)
-async def join(ctx):
-    if (ctx.author.voice):
-        print('Server:', ctx.message.guild, 'Author:',ctx.author, 'Connect to voice:', ctx.author.voice.channel)
-        await ctx.author.voice.channel.connect()
+@bot.slash_command(description='Подключение к войс чату')
+async def join(inter):
+    print('Server {}. Author: {} Connect to voice: {}'.format(inter.guild,inter.author,inter.author.voice.channel))
+    if (inter.author.voice):
+        await inter.author.voice.channel.connect()
+        await inter.response.send_message("Connected", delete_after=10)
     else:
-        await ctx.send("Please Join Voice channel to run this command")
+        await inter.response.send_message("Please Join Voice channel to run this command", delete_after=10)
 
-@bot.command()
-async def leave(ctx):
-    print('Server:', ctx.message.guild, 'Author:',ctx.author, 'Leave voice.')
-    await ctx.voice_client.disconnect()
+@bot.slash_command(description='Выйти из войса')
+async def leave(inter):
+    print('Server {}. Author: {} Leave voice.'.format(inter.guild,inter.author))
+    await inter.guild.voice_client.disconnect(force=True)
+    await inter.response.send_message("Leave voice.", delete_after=10)
 
+@bot.slash_command(description='Включить говно с ютуба')
+async def play(inter, url):
+    # Проверка наличия бота в войсе, в случае чего добовляем
+    if not inter.guild.voice_client:
+        await inter.author.voice.channel.connect()
 
-# @bot.command()
-# async def add(ctx, url):
-#     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
-#     FFMPEG_OPTIONS = {
-#         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-#     voice = get(bot.voice_clients, guild=ctx.guild)
-
-#     if not voice.is_playing():
-#         with YoutubeDL(YDL_OPTIONS) as ydl:
-#             info = ydl.extract_info(url, download=False)
-#         URL = info['url']
-#         voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-#         voice.is_playing()
-#         await ctx.send('Bot is playing')
-
-# command to play sound from a youtube URL
-@bot.command()
-async def play(ctx, url):
-
-    # Проверка наличия бота в войсе
-    if not ctx.message.guild.voice_client:
-        await ctx.author.voice.channel.connect()
-
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice = get(bot.voice_clients, guild=inter.guild)
     if not voice.is_playing():
         addqueue(url)
         playqueue(voice)
     else:
         addqueue(url)
-    await ctx.send(playlistinfo())
-#     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
-#     FFMPEG_OPTIONS = {
-#         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-#     voice = get(bot.voice_clients, guild=ctx.guild)
-#     if not voice.is_playing():
-#         with YoutubeDL(YDL_OPTIONS) as ydl:
-#             info = ydl.extract_info(url, download=False)
-#         URL = info['url']
-#         voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: playqueue(voice))
-#         voice.is_playing()
-#         await ctx.send('Bot is playing')
+    await inter.response.send_message(playlistinfo(), delete_after=300)
 
-# # check if the bot is already playing
-#     else:
-#         await ctx.send("Bot is already playing")
-#         return
-
-
-# command to resume voice if it is paused
-@bot.command()
-async def resume(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+@bot.slash_command(description='Продолжить')
+async def resume(inter):
+    voice = get(bot.voice_clients, guild=inter.guild)
 
     if not voice.is_playing():
         voice.resume()
-        await ctx.send('Bot is resuming')
+        await inter.response.send_message("Bot is resuming", delete_after=10)
 
 
 # command to pause voice if it is playing
-@bot.command()
-async def pause(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+@bot.slash_command(description='Поставить на паузу')
+async def pause(inter):
+    voice = get(bot.voice_clients, guild=inter.guild)
 
     if voice.is_playing():
         voice.pause()
-        await ctx.send('Bot has been paused')
+        await inter.response.send_message("Bot has been paused", delete_after=10)
 
 
 # command to stop voice
-@bot.command()
-async def skip(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+@bot.slash_command(description='Скип говна, если DJ ебан')
+async def skip(inter):
+    voice = get(bot.voice_clients, guild=inter.guild)
 
     if voice.is_playing():
         voice.stop()
-        await ctx.send('Skiping...')
-        await ctx.send(playlistinfo())
+        await inter.response.send_message("playlistinfo()", delete_after=10)
 
 # command to stop voice
-@bot.command()
-async def stop(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+@bot.slash_command(description='Стоп')
+async def stop(inter):
+    voice = get(bot.voice_clients, guild=inter.guild)
 
     if voice.is_playing():
         song_queue.clear()
         voice.stop()
-        await ctx.send('Stopping...')
-
-# command to clear channel messages
-@bot.command()
-async def clear(ctx, amount=5):
-    await ctx.channel.purge(limit=amount)
-    await ctx.send("Messages have been cleared")
+        await inter.response.send_message("Stopping...", delete_after=10)
 
 
-token = read_config(configfile, 'token')
+
+@bot.slash_command(description='Стоп + сказать DJ, что он ебан')
+async def eban(inter):
+    if not inter.guild.voice_client:
+        await inter.author.voice.channel.connect()
+        
+    voice = get(bot.voice_clients, guild=inter.guild)
+    song_queue.clear()
+    addqueue("https://www.youtube.com/watch?v=aGob2BwZvmI")
+    voice.stop()
+    playqueue(voice)
+    await inter.response.send_message("DJ ЕБАН!!", delete_after=10)
+
+file = open('token.txt', 'r')
+token = file.read()
+file.close()
 bot.run(token)
-
-
-
-

@@ -1,2 +1,2 @@
-discord.py==2.0.1
+disnake==2.6.0
 youtube_dl==2021.12.17

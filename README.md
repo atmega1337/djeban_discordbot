@@ -33,8 +33,6 @@ pip install -r requirements.txt
 
 В linux: sudo apt install ffmpeg
 
-4. Запустить main.py, будет создан файл config.ini
+4. Создать файл token.txt и вписать туда токен бота. [Создать бота](https://discord.com/developers/applications)
 
-5. [Создать бота](https://discord.com/developers/applications) и его токен вписать в config.ini
-
-6. Запустить бота
+5. Запустить бота
