@@ -1,3 +1,5 @@
+import os
+import sys
 import disnake
 
 from disnake.ext import commands
@@ -19,7 +21,7 @@ def playlistinfo():
             infolist += str(n+1) + ') ' + song_queue[n][0] + "\n"
     return(infolist)
 
-def addqueue(url=''):
+def addqueue(url='', author=''):
     YDL_OPTIONS = {
         'format': 'bestaudio/best',
         'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
@@ -35,7 +37,7 @@ def addqueue(url=''):
     }
     with YoutubeDL(YDL_OPTIONS) as ydl:
         info = ydl.extract_info(url, download=False)
-    newelement = [info['title'], info['url']]
+    newelement = [info['title'], info['url'], author]
     song_queue.append(newelement)
 
 
@@ -99,15 +101,14 @@ async def leave(inter):
 @bot.slash_command(description='Включить говно с ютуба')
 async def play(inter, url):
     print('Server {}. Author: {} play: {}'.format(inter.guild,inter.author,url))
-    # Проверка наличия бота в войсе, в случае чего добовляем
+    # Добавляем в войс
     await join_to_voice(inter)
 
     voice = get(bot.voice_clients, guild=inter.guild)
+    addqueue(url)
     if not voice.is_playing():
-        addqueue(url)
         playqueue(voice)
-    else:
-        addqueue(url)
+
     await inter.response.send_message(playlistinfo(), delete_after=300)
 
 @bot.slash_command(description='Продолжить')
@@ -148,19 +149,24 @@ async def stop(inter):
         voice.stop()
         await inter.response.send_message("Stopping...", delete_after=10)
 
+dirmp3=os.path.join(os.path.dirname(sys.argv[0]),'mp3')
+listmp3 = os.listdir(dirmp3)
+print(listmp3)
 
-
-@bot.slash_command(description='Стоп + сказать DJ, что он ебан')
-async def eban(inter):
+@bot.slash_command(description='Мемы ебать')
+async def mp3(inter, mp3: commands.option_enum(listmp3)):
     if not inter.guild.voice_client:
         await inter.author.voice.channel.connect()
-        
-    voice = get(bot.voice_clients, guild=inter.guild)
+    
     song_queue.clear()
-    addqueue("https://www.youtube.com/watch?v=aGob2BwZvmI")
+
+    newelement = [mp3, os.path.join(dirmp3, mp3)]
+    song_queue.append(newelement)
+
+    voice = get(bot.voice_clients, guild=inter.guild)
     voice.stop()
     playqueue(voice)
-    await inter.response.send_message("DJ ЕБАН!!", delete_after=10)
+    await inter.response.send_message(mp3, delete_after=10)
 
 file = open('token.txt', 'r')
 token = file.read()
