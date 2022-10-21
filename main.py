@@ -89,7 +89,7 @@ async def ping(inter):
 async def join(inter, channel: disnake.VoiceChannel=None):
     msg= await join_to_voice(inter, channel)
     await inter.response.send_message(msg, delete_after=10)
-
+    
 
 @bot.slash_command(description='Выйти из войса')
 async def leave(inter):
@@ -154,7 +154,7 @@ listmp3 = os.listdir(dirmp3)
 print(listmp3)
 
 @bot.slash_command(description='Мемы ебать')
-async def mp3(inter, mp3: commands.option_enum(listmp3)):
+async def meme(inter, mp3: commands.option_enum(listmp3)):
     if not inter.guild.voice_client:
         await inter.author.voice.channel.connect()
     
