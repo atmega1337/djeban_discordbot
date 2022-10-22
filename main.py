@@ -101,6 +101,7 @@ async def leave(inter):
 @bot.slash_command(description='Включить говно с ютуба')
 async def play(inter, url):
     print('Server {}. Author: {} play: {}'.format(inter.guild,inter.author,url))
+    test=await inter.response.send_message('Author: {} play: {}'.format(inter.author,url), delete_after=30)
     # Добавляем в войс
     await join_to_voice(inter)
 
@@ -108,8 +109,7 @@ async def play(inter, url):
     addqueue(url)
     if not voice.is_playing():
         playqueue(voice)
-
-    await inter.response.send_message(playlistinfo(), delete_after=300)
+    await inter.send(playlistinfo(), delete_after=900)
 
 @bot.slash_command(description='Продолжить')
 async def resume(inter):
