@@ -1,4 +1,4 @@
-token.txt
+*.txt
 mp3/casino.mp3
 mp3/chiken.mp3
 mp3/dimon.mp3
@@ -6,3 +6,4 @@ mp3/dyrka.mp3
 mp3/modem.mp3
 mp3/sanya.mp3
 mp3/thomas.mp3
+__pycache__
