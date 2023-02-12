@@ -19,13 +19,15 @@
 
 /leave - выйти из войс часа
 
-/eban - отключить воспроизведение и включить djeban
+/meme ** - Воспроизведение mp3 из папки
 
 # Установка
 1. Установить python 3.10
 
+
 2. В директории выполнить:
 pip install -r requirements.txt
+
 
 3. Установить [ffmpeg](https://ffmpeg.org/download.html):
 
@@ -33,6 +35,24 @@ pip install -r requirements.txt
 
 В linux: sudo apt install ffmpeg
 
-4. Создать файл token.txt и вписать туда токен бота. [Создать бота](https://discord.com/developers/applications)
 
-5. Запустить бота
+4. [Создать бота](https://discord.com/developers/applications). 
+
+В настройках включить: PRESENCE INTENT, SERVER MEMBERS INTENT, MESSAGE CONTENT INTENT
+
+
+5. Пригласить бота на свой сервер
+
+OAuth2 > URL Generator
+
+SCOPES = bot
+
+Выдать права (для теста можно administrator)
+
+Перейти по ссылке, добавить бота
+
+
+5. Создать папку mp3 (туда можно закидывать файлы), файл token.txt и вписать туда токен бота. 
+
+
+6. Запустить бота
