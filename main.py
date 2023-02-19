@@ -9,6 +9,20 @@ from disnake.ext import commands
 from disnake import FFmpegPCMAudio
 from disnake.utils import get
 
+
+tokenfile="token.txt"
+
+def readtoken(path):
+    if os.path.isfile(path):
+        file = open(path, 'r')
+        webhooktoken = file.read()
+        file.close()
+        return webhooktoken
+    else:
+        print("Pls, create file {} and write webhook token on this file.".format(path))
+        input()
+        exit()
+
 # server, [name:'', url:'', img:'', customer: '']
 song_queue = {} 
 
@@ -29,7 +43,7 @@ def playlistinfo(idserver):
     infolist = "Playlist: \n"
     if song_queue[idserver]:
         for n in range(len(song_queue[idserver])):
-            infolist += "{}) {} (Customer: {})\n".format(str(n+1), song_queue[idserver][n]['name'], song_queue[idserver][n]['customer'])
+            infolist += "{}) {} (Requested: {})\n".format(str(n+1), song_queue[idserver][n]['name'], song_queue[idserver][n]['customer'])
     return(infolist)
 
 def addqueue(idserver,name,url,img='',customer=''):
@@ -231,8 +245,5 @@ async def on_voice_state_update(member, before, after):
 #     #     await member.edit(mute=True)
 #     print(inter.channel)
 
-
-file = open('token.txt', 'r')
-token = file.read()
-file.close()
+token = readtoken(tokenfile)
 bot.run(token)
