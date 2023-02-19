@@ -19,7 +19,7 @@ def readtoken(path):
         file.close()
         return webhooktoken
     else:
-        print("Pls, create file {} and write webhook token on this file.".format(path))
+        print("Pls, create file {} and write token on this file.".format(path))
         input()
         exit()
 
