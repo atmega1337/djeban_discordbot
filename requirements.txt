@@ -1,2 +1,2 @@
-disnake==2.6.0
-youtube_dl==2021.12.17
+disnake==2.8.1
+yt_dlp==2023.3.4

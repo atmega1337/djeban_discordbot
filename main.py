@@ -29,14 +29,14 @@ song_queue = {}
 bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='))
 
 # Не работает mp3
-# FFMPEG_OPTIONS = {
-#     'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-#     'options': '-vn'
-# }
 FFMPEG_OPTIONS = {
-    'before_options': '-nostdin',
+    'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn'
 }
+# FFMPEG_OPTIONS = {
+#     'before_options': '-nostdin',
+#     'options': '-vn'
+# }
 
 
 def playlistinfo(idserver):

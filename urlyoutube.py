@@ -1,4 +1,7 @@
-from youtube_dl import YoutubeDL
+import yt_dlp
+
+
+# from youtube_dl import YoutubeDL
 
 def get(url):
     """
@@ -6,6 +9,8 @@ def get(url):
     """
     YDL_OPTIONS = {
         'format': 'bestaudio/best',
+        'extractaudio': True,
+        'audioformat': 'mp3',
         'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
         'restrictfilenames': True,
         'noplaylist': True,
@@ -15,9 +20,9 @@ def get(url):
         'quiet': True,
         'no_warnings': True,
         'default_search': 'auto',
-        'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
+        'source_address': '0.0.0.0',
     }
-    with YoutubeDL(YDL_OPTIONS) as ydl:
+    with yt_dlp.YoutubeDL(YDL_OPTIONS) as ydl:
         info = ydl.extract_info(url, download=False)
     data={'title': info['title'], 'url': info['url'], 'img': info['thumbnail']}
     return data
