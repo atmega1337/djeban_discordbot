@@ -1,2 +1,2 @@
-disnake==2.8.1
-yt_dlp==2023.3.4
+disnake
+yt_dlp

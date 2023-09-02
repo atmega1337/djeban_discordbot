@@ -28,15 +28,10 @@ song_queue = {}
 
 bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='))
 
-# Не работает mp3
 FFMPEG_OPTIONS = {
-    'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    'before_options': '-nostdin',
     'options': '-vn'
 }
-# FFMPEG_OPTIONS = {
-#     'before_options': '-nostdin',
-#     'options': '-vn'
-# }
 
 
 def playlistinfo(idserver):
@@ -168,37 +163,6 @@ async def stop(inter):
         song_queue[inter.guild_id].clear()
         voice.stop()
         await inter.response.send_message("Stopping...", delete_after=10)
-
-
-dirmp3=os.path.join(os.path.dirname(sys.argv[0]),'mp3')
-listmp3 = os.listdir(dirmp3)
-
-@bot.slash_command(description='Мемы ебать')
-async def meme(inter, mp3: commands.option_enum(listmp3)):
-    await inter.response.send_message(mp3, delete_after=10)   
-    # Добавляем в войс
-    await join_to_voice(inter)
-    # song_queue[inter.guild_id].insert()
-    # newelement = [mp3, os.path.join(dirmp3, mp3)]
-    # song_queue.append(newelement)
-
-    newelement = {
-        'name':mp3,
-        'url':os.path.join(dirmp3, mp3),
-        'img':'',
-        'customer': inter.author.name
-    }
-    if not inter.guild_id in song_queue:
-        song_queue[inter.guild_id] = []
-    
-    if song_queue[inter.guild_id]:
-        song_queue[inter.guild_id].insert(0, newelement)
-    song_queue[inter.guild_id].insert(0, newelement)
-    voice = get(bot.voice_clients, guild=inter.guild)
-    if not voice.is_playing():
-        player(inter)
-    else:
-        voice.stop()
 
 
 # Отображение после запуска
