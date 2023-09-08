@@ -29,7 +29,7 @@ song_queue = {}
 bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='))
 
 FFMPEG_OPTIONS = {
-    'before_options': '-nostdin',
+    'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn'
 }
 
@@ -126,6 +126,20 @@ async def play(inter, url):
     if not voice.is_playing():
         player(inter)
     await inter.send(playlistinfo(inter.guild_id), delete_after=300)
+
+@bot.slash_command(description='Получить ссылку на mp3')
+async def getmp3(inter, url):
+    print('Server {}. Author: {} getmp3: {}'.format(inter.guild,inter.author,url))
+
+    # Конвертируем ссылку с ютуба
+    if (('youtube.com/watch?v=' in url) or ("youtu.be/" in url)):
+        data=urlyoutube.get(url)
+    else:
+        await inter.send("Link not supported", delete_after=10)
+        return
+    
+    await inter.send("Link mp3: {}".format(data['url']), delete_after=30)
+    
 
 @bot.slash_command(description='Продолжить')
 async def resume(inter):
