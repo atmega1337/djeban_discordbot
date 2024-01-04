@@ -1,2 +1,3 @@
 disnake
 yt_dlp
+PyNaCl

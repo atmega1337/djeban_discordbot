@@ -113,33 +113,27 @@ async def play(inter, url):
 
     # Конвертируем ссылку с ютуба
     if (('youtube.com/watch?v=' in url) or ("youtu.be/" in url)):
-        data=urlyoutube.get(url)
+        
+        try:
+            data=urlyoutube.get(url)
+        except:
+            await inter.send("Video not available", delete_after=10)
+            return
+        else:
+            pass
     else:
         await inter.send("Link not supported", delete_after=10)
         return
 
     # Добавляем в очередь
-    addqueue(inter.guild_id, data['title'], data['url'], data['img'], inter.author.name)
+    for i in data:
+        addqueue(inter.guild_id, i['title'], i['url'], i['img'], inter.author.name)
     
     # Запускаем плеер
     voice = get(bot.voice_clients, guild=inter.guild)
     if not voice.is_playing():
         player(inter)
     await inter.send(playlistinfo(inter.guild_id), delete_after=300)
-
-@bot.slash_command(description='Получить ссылку на mp3')
-async def getmp3(inter, url):
-    print('Server {}. Author: {} getmp3: {}'.format(inter.guild,inter.author,url))
-
-    # Конвертируем ссылку с ютуба
-    if (('youtube.com/watch?v=' in url) or ("youtu.be/" in url)):
-        data=urlyoutube.get(url)
-    else:
-        await inter.send("Link not supported", delete_after=10)
-        return
-    
-    await inter.send("Link mp3: {}".format(data['url']), delete_after=30)
-    
 
 @bot.slash_command(description='Продолжить')
 async def resume(inter):
