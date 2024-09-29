@@ -20,6 +20,7 @@ FFMPEG_OPTIONS = {
 }
 
 logging.basicConfig(level=logging.INFO, filename="bot.log",filemode="w")
+logging.getLogger().addHandler(logging.StreamHandler())
 
 def readtoken(path):
     if os.path.isfile(path):
