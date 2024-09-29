@@ -1,2 +1,3 @@
 #!/bin/bash
-git pull https://github.com/atmega1337/djeban_discordbot.git
+git reset --hard HEAD
+git pull
