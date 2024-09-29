@@ -4,6 +4,8 @@ import disnake
 import datetime
 import asyncio
 import urlyoutube
+import logging
+
 
 from disnake.ext import commands
 from disnake import FFmpegPCMAudio
@@ -12,6 +14,12 @@ from disnake.utils import get
 
 tokenfile="token.txt"
 
+FFMPEG_OPTIONS = {
+    'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    'options': '-vn'
+}
+
+
 def readtoken(path):
     if os.path.isfile(path):
         file = open(path, 'r')
@@ -19,7 +27,7 @@ def readtoken(path):
         file.close()
         return webhooktoken
     else:
-        print("Pls, create file {} and write token on this file.".format(path))
+        logging.critical("Pls, create file {} and write token on this file.".format(path))
         input()
         exit()
 
@@ -28,10 +36,6 @@ song_queue = {}
 
 bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='))
 
-FFMPEG_OPTIONS = {
-    'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-    'options': '-vn'
-}
 
 
 def playlistinfo(idserver):
@@ -87,7 +91,7 @@ async def join_to_voice(inter, channel=None):
     else:
         await channel.connect()
         msg="Join to channel: {}".format(channel)
-    print('Server {}. Author: {} Connect to voice: {}'.format(inter.guild,inter.author,channel))
+    logging.info('Server {}. Author: {} Connect to voice: {}'.format(inter.guild,inter.author,channel))
     return msg
    
 
@@ -99,14 +103,14 @@ async def join(inter, channel: disnake.VoiceChannel=None):
 
 @bot.slash_command(description='Выйти из войса')
 async def leave(inter):
-    print('Server {}. Author: {} Leave voice.'.format(inter.guild,inter.author))
+    logging.info('Server {}. Author: {} Leave voice.'.format(inter.guild,inter.author))
     await inter.guild.voice_client.disconnect(force=True)
     await inter.response.send_message("Leave voice.", delete_after=10)
 
 
 @bot.slash_command(description='Включить говно с ютуба')
 async def play(inter, url):
-    print('Server {}. Author: {} play: {}'.format(inter.guild,inter.author,url))
+    logging.info('Server {}. Author: {} send /play {}'.format(inter.guild,inter.author,url))
     await inter.response.send_message('Author: {} play: {}'.format(inter.author,url), delete_after=10)
     # Добавляем в войс
     await join_to_voice(inter)
@@ -118,11 +122,13 @@ async def play(inter, url):
             data=urlyoutube.get(url)
         except:
             await inter.send("Video not available", delete_after=10)
+            logging.warning('Video not available: {}'.format(url))
             return
         else:
             pass
     else:
         await inter.send("Link not supported", delete_after=10)
+        logging.warning('Link not supported: {}'.format(url))
         return
 
     # Добавляем в очередь
@@ -137,6 +143,7 @@ async def play(inter, url):
 
 @bot.slash_command(description='Продолжить')
 async def resume(inter):
+    logging.info('Server {}. Author: {} send /resume'.format(inter.guild,inter.author))
     voice = get(bot.voice_clients, guild=inter.guild)
 
     if not voice.is_playing():
@@ -146,6 +153,7 @@ async def resume(inter):
 
 @bot.slash_command(description='Поставить на паузу')
 async def pause(inter):
+    logging.info('Server {}. Author: {} send /pause'.format(inter.guild,inter.author))
     voice = get(bot.voice_clients, guild=inter.guild)
 
     if voice.is_playing():
@@ -155,6 +163,7 @@ async def pause(inter):
 
 @bot.slash_command(description='Скип говна, если DJ ебан')
 async def skip(inter):
+    logging.info('Server {}. Author: {} send /skip'.format(inter.guild,inter.author))
     voice = get(bot.voice_clients, guild=inter.guild)
 
     if voice.is_playing():
@@ -165,6 +174,7 @@ async def skip(inter):
 
 @bot.slash_command(description='Стоп')
 async def stop(inter):
+    logging.info('Server {}. Author: {} send /stop'.format(inter.guild,inter.author))
     voice = get(bot.voice_clients, guild=inter.guild)
 
     if voice.is_playing():
@@ -176,9 +186,9 @@ async def stop(inter):
 # Отображение после запуска
 @bot.event  # check if bot is ready
 async def on_ready():
-    print('\n[{}] Logged in as: {} - {}'.format(datetime.datetime.today(),bot.user.name,bot.user.id))
+    logging.info('\n[{}] Logged in as: {} - {}'.format(datetime.datetime.today(),bot.user.name,bot.user.id))
     for guild in bot.guilds:
-        print('Server {}. Member Count : {}'.format(guild.name,guild.member_count))
+        logging.info('Server {}. Member Count : {}'.format(guild.name,guild.member_count))
         # for member in guild.members:
         #     print (member)
 
@@ -199,7 +209,7 @@ async def on_voice_state_update(member, before, after):
         if (len(voice.channel.members) == 1):
             await asyncio.sleep(300)
             if (len(voice.channel.members) == 1 & voice.is_connected()):
-                print("Leave from {}, empty channel".format(member.guild))
+                logging.info("Server {}. Leave from empty channel".format(member.guild))
                 await voice.disconnect()
 
 
