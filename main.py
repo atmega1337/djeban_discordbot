@@ -19,6 +19,7 @@ FFMPEG_OPTIONS = {
     'options': '-vn'
 }
 
+logging.basicConfig(level=logging.INFO, filename="bot.log",filemode="w")
 
 def readtoken(path):
     if os.path.isfile(path):
