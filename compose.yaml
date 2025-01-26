@@ -1,0 +1,8 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      - discordtoken
+    # volumes:
+    #   - /logs/:/app/logs/

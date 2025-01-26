@@ -12,26 +12,13 @@ from disnake import FFmpegPCMAudio
 from disnake.utils import get
 
 
-tokenfile="token.txt"
-
 FFMPEG_OPTIONS = {
     'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn'
 }
 
-logging.basicConfig(level=logging.INFO, filename="bot.log",filemode="w")
+logging.basicConfig(level=logging.INFO, filename="logs/bot.log",filemode="w")
 logging.getLogger().addHandler(logging.StreamHandler())
-
-def readtoken(path):
-    if os.path.isfile(path):
-        file = open(path, 'r')
-        webhooktoken = file.read()
-        file.close()
-        return webhooktoken
-    else:
-        logging.critical("Pls, create file {} and write token on this file.".format(path))
-        input()
-        exit()
 
 # server, [name:'', url:'', img:'', customer: '']
 song_queue = {} 
@@ -199,7 +186,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     text="{},{},{}: {} {}".format(datetime.datetime.today(),message.channel,message.author,message.content,message.attachments)
-    with open('{}.txt'.format(message.guild),'ab') as f:
+    with open('logs/chats/{}.txt'.format(message.guild),'ab') as f:
         f.write(text.encode() + '\n'.encode())
 
 
@@ -229,5 +216,5 @@ async def on_voice_state_update(member, before, after):
 #     #     await member.edit(mute=True)
 #     print(inter.channel)
 
-token = readtoken(tokenfile)
+token = os.getenv('discordtoken')
 bot.run(token)
