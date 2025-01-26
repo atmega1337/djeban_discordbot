@@ -1,4 +1,7 @@
 #!/bin/bash
+
+mkdir -p logs/chats
+
 screenname=$(pwd | grep -o '[^/]*$')
 
 screen -X -S $screenname kill
