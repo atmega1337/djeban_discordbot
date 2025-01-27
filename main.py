@@ -217,4 +217,5 @@ async def on_voice_state_update(member, before, after):
 #     print(inter.channel)
 
 token = os.getenv('discordtoken')
+disnake.opus.load_opus('/usr/lib/libopus.so.0')
 bot.run(token)
