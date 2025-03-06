@@ -4,5 +4,6 @@ services:
       context: .
     environment:
       - discordtoken
+    restart: always
     # volumes:
     #   - /logs/:/app/logs/
