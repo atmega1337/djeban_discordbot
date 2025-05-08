@@ -9,6 +9,10 @@ screen -X -S $screenname kill
 script_dir=`dirname $0`
 cd $script_dir
 
-./.env/bin/pip install --upgrade pip
-./.env/bin/pip install --upgrade -r requirements.txt
-screen -dmS $screenname ./.env/bin/python main.py
+if [ ! -d "venv" ]; then
+  python3 -m venv venv
+fi
+
+./venv/bin/pip install --upgrade pip
+./venv/bin/pip install --upgrade -r requirements.txt
+screen -dmS $screenname ./venv/bin/python main.py

@@ -27,9 +27,11 @@ if not alpinemode:
 proxy_url = os.getenv('proxy')
 
 FFMPEG_OPTIONS = {
-    'before_options': f'-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 {f'-http_proxy "{proxy_url}"' if proxy_url else ''}',
+    'before_options': f'-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn'
 }
+if proxy_url:
+    FFMPEG_OPTIONS['before_options']+=f' -http_proxy {proxy_url}'
 
 # server, [name:'', url:'', img:'', customer: '']
 song_queue = {} 
