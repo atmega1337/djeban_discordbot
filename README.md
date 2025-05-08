@@ -1,9 +1,6 @@
 # DJEBAN
 Музыкальный бот для discord. Пока поддерживется только YouTube.
 
-Проект находится в альфа версии!
-
-
 # Команды
 /play https://www.youtube.com/watch?v=  - включить воспроизведение
 
@@ -19,40 +16,72 @@
 
 /leave - выйти из войс часа
 
-/meme ** - Воспроизведение mp3 из папки
+# Создание бота и .env файла
 
-# Установка
-1. Установить python 3.10
-
-
-2. В директории выполнить:
-pip install -r requirements.txt
-
-
-3. Установить [ffmpeg](https://ffmpeg.org/download.html):
-
-В windows: скачать и закинуть в одну из дирректорий PATH (например C:/Windows) или создать свою.
-
-В linux: sudo apt install ffmpeg
-
-
-4. [Создать бота](https://discord.com/developers/applications). 
+1. [Создать бота](https://discord.com/developers/applications). 
 
 В настройках включить: PRESENCE INTENT, SERVER MEMBERS INTENT, MESSAGE CONTENT INTENT
 
 
-5. Пригласить бота на свой сервер
+2. Пригласить бота на свой сервер
 
-OAuth2 > URL Generator
+> Installation:
+```
+Guild install = ON
 
-SCOPES = bot
+install Link:
+Discord Provided Link
 
-Выдать права (для теста можно administrator)
+Default Install Settings:
+Scopes: applications.commands, bot
+Permissions: Administrator
+```
 
-Перейти по ссылке, добавить бота
+Перейти по ссылке в install Link, добавить бота
 
 
-5. Создать папку mp3 (туда можно закидывать файлы), файл token.txt и вписать туда токен бота. 
+3. Создать файл .env в корне с проектом
+```
+token=*You Token*
+proxy=http://127.0.0.1:1080 (прокси, работает только под windows)
+```
+
+# Запуск в docker
+
+Установить [docker and docker compose](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+
+Выполнить в папке с проектом:
+```
+docker compose up
+```
+
+# Запуск windows
+1. Установить [python](https://www.python.org/downloads/)
+
+2. Установить [ffmpeg](https://ffmpeg.org/download.html):
+
+Скачать и закинуть в одну из дирректорий PATH (например C:/Windows) или создать свою.
+
+3. Запустить start.bat
+
+# Запуск linux
+1. Установить python, python3-venv 
+
+2. Установить ffmpeg и screen:
 
 
-6. Запустить бота
+```
+sudo apt install ffmpeg screen
+chmod +x startscreen.sh
+```
+
+3. Запустить файл
+```
+./startscreen.sh
+```
+
+4. Для автоматического запуска и перезапуска внести в crontab (> **crontab -e**):
+```
+#@reboot cd /home/user/djeban; sh ./start.sh
+#0 6 * * * cd /home/user/djeban; sh ./start.sh
+```

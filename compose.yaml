@@ -4,7 +4,6 @@ services:
       context: .
     environment:
       - token
-      - proxy
     restart: always
     # volumes:
     #   - /logs/:/app/logs/
