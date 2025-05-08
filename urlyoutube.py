@@ -4,10 +4,19 @@ from urllib.parse import parse_qs
 
 # from youtube_dl import YoutubeDL
 
-def get(url, playlistcount=10):
+def get(url, **args):
     """
     Get youtube link and return title, url mp3, img
+
+    url - link
+
+    args:
+    playlistcount=10
+    proxy=http://127.0.0.1:1080
     """
+    playlistcount = args.pop("playlistcount", 10)
+    proxy = args.pop("proxy", None)
+
     YDL_OPTIONS = {
         'format': 'bestaudio/best',
         'extractaudio': True,
@@ -23,6 +32,8 @@ def get(url, playlistcount=10):
         'default_search': 'auto',
         'source_address': '0.0.0.0',
     }
+    if proxy:
+        YDL_OPTIONS['proxy']=proxy
 
 
     if 'list' in url:
@@ -60,6 +71,6 @@ def get(url, playlistcount=10):
 
 if __name__ == "__main__": 
 
-    test=get("https://www.youtube.com/watch?v=J85jV37CsYE&list=PLJWF8BCq8piTlxeOPvVYbAM0Of5YQGigu&index=2&ab_channel=SathButtons")
+    test=get("https://www.youtube.com/watch?v=J85jV37CsYE")
     print(test)
 

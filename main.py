@@ -1,29 +1,40 @@
 import os
-import sys
 import disnake
 import datetime
 import asyncio
 import urlyoutube
 import logging
 
-
 from disnake.ext import commands
 from disnake import FFmpegPCMAudio
 from disnake.utils import get
 
-
-FFMPEG_OPTIONS = {
-    'before_options': '-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-    'options': '-vn'
-}
-
 logging.basicConfig(level=logging.INFO, filename="logs/bot.log",filemode="w")
 logging.getLogger().addHandler(logging.StreamHandler())
+
+
+# Get args
+args=os.path.os.sys.argv[1:]
+
+alpinemode = True if '-alpinemode' in args else False
+logging.debug(f'Alpinemode = {alpinemode}')
+
+# Loading .env file
+if not alpinemode:
+    from dotenv import load_dotenv
+    load_dotenv()
+
+proxy_url = os.getenv('proxy')
+
+FFMPEG_OPTIONS = {
+    'before_options': f'-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 {f'-http_proxy "{proxy_url}"' if proxy_url else ''}',
+    'options': '-vn'
+}
 
 # server, [name:'', url:'', img:'', customer: '']
 song_queue = {} 
 
-bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='))
+bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='), proxy=proxy_url)
 
 
 
@@ -108,7 +119,7 @@ async def play(inter, url):
     if (('youtube.com/watch?v=' in url) or ("youtu.be/" in url)):
         
         try:
-            data=urlyoutube.get(url)
+            data=urlyoutube.get(url, proxy=proxy_url)
         except:
             await inter.send("Video not available", delete_after=10)
             logging.warning('Video not available: {}'.format(url))
@@ -216,6 +227,7 @@ async def on_voice_state_update(member, before, after):
 #     #     await member.edit(mute=True)
 #     print(inter.channel)
 
-token = os.getenv('discordtoken')
-disnake.opus.load_opus('/usr/lib/libopus.so.0')
+token = os.getenv('token')
+if alpinemode:
+    disnake.opus.load_opus('/usr/lib/libopus.so.0')
 bot.run(token)

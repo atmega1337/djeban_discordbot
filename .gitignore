@@ -1,5 +1,4 @@
-*.txt
 __pycache__
 .idea/*
-*.log
+logs
 .env

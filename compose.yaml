@@ -3,6 +3,7 @@ services:
     build:
       context: .
     environment:
-      - discordtoken
+      - token
+      - proxy
     # volumes:
     #   - /logs/:/app/logs/
