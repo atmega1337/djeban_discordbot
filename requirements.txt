@@ -1,3 +1,4 @@
 disnake
 yt_dlp
 PyNaCl
+dotenv
