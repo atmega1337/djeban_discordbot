@@ -45,11 +45,6 @@ Permissions: Administrator
 
 Создайте папку logs
 
-Создать файл .env в корне с проектом
-```
-token=*You Token*
-```
-
 Создать compose.yaml файл с содержимым
 ```
 services:
@@ -60,6 +55,16 @@ services:
       - /logs/:/app/logs/
     env_file:
       - .env
+```
+
+Создать файл .env в папке, где расположен compose.yaml
+```
+token=*You Token*
+```
+
+Выполнить в папке с compose.yaml:
+```
+docker compose up
 ```
 
 # Запуск в docker compose (сборка)
