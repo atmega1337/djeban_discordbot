@@ -37,18 +37,39 @@ Scopes: applications.commands, bot
 Permissions: Administrator
 ```
 
-Перейти по ссылке в install Link, добавить бота
+Перейти по ссылке в install Link, добавить бота на сервер
 
-
-3. Создать файл .env в корне с проектом
-```
-token=*You Token*
-proxy=http://127.0.0.1:1080 (прокси, работает только под windows)
-```
-
-# Запуск в docker
+# Запуск в docker compose (готовый образ)
 
 Установить [docker and docker compose](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+
+Создайте папку logs
+
+Создать файл .env в корне с проектом
+```
+token=*You Token*
+```
+
+Создать compose.yaml файл с содержимым
+```
+services:
+  app:
+    image: ghcr.io/atmega1337/djeban_discordbot:master
+    restart: unless-stopped
+    volumes:
+      - /logs/:/app/logs/
+    env_file:
+      - .env
+```
+
+# Запуск в docker compose (сборка)
+
+Установить [docker and docker compose](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+
+Создать файл .env в корне с проектом
+```
+token=*You Token*
+```
 
 Выполнить в папке с проектом:
 ```
@@ -62,7 +83,12 @@ docker compose up
 
 Скачать и закинуть в одну из дирректорий PATH (например C:/Windows) или создать свою.
 
-3. Запустить start.bat
+3. Создайте файл .env с токеном
+```
+token=*You Token*
+```
+
+4. Запустить start.bat
 
 # Запуск linux
 1. Установить python, python3-venv 
@@ -75,12 +101,18 @@ sudo apt install ffmpeg screen
 chmod +x startscreen.sh
 ```
 
-3. Запустить файл
+3. Создайте файл .env с токеном
+
+```
+token=*You Token*
+```
+
+4. Запустить файл
 ```
 ./startscreen.sh
 ```
 
-4. Для автоматического запуска и перезапуска внести в crontab (> **crontab -e**):
+5. Для автоматического запуска и перезапуска внести в crontab (**crontab -e**):
 ```
 #@reboot cd /home/user/djeban; sh ./start.sh
 #0 6 * * * cd /home/user/djeban; sh ./start.sh
