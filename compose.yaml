@@ -1,5 +1,5 @@
 services:
-  server:
+  app:
     build:
       context: .
     environment:
@@ -7,3 +7,4 @@ services:
     restart: always
     # volumes:
     #   - /logs/:/app/logs/
+    

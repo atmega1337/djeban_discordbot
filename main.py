@@ -24,21 +24,15 @@ if not alpinemode:
     from dotenv import load_dotenv
     load_dotenv()
 
-proxy_url = os.getenv('proxy')
-
 FFMPEG_OPTIONS = {
     'before_options': f'-nostdin  -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn'
 }
-if proxy_url:
-    FFMPEG_OPTIONS['before_options']+=f' -http_proxy {proxy_url}'
 
 # server, [name:'', url:'', img:'', customer: '']
 song_queue = {} 
 
-bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='), proxy=proxy_url)
-
-
+bot = commands.Bot(command_prefix='!', intents=disnake.Intents.all(), activity = disnake.Streaming(name='YouTube', url='https://www.youtube.com/watch?v='))
 
 def playlistinfo(idserver):
     infolist = "Playlist: \n"
@@ -121,7 +115,7 @@ async def play(inter, url):
     if (('youtube.com/watch?v=' in url) or ("youtu.be/" in url)):
         
         try:
-            data=urlyoutube.get(url, proxy=proxy_url)
+            data=urlyoutube.get(url)
         except:
             await inter.send("Video not available", delete_after=10)
             logging.warning('Video not available: {}'.format(url))
