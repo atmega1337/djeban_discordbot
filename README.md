@@ -16,16 +16,21 @@
 
 /leave - выйти из войс часа
 
-# Создание бота и .env файла
+# Создание бота
 
 1. [Создать бота](https://discord.com/developers/applications). 
 
-В настройках включить: PRESENCE INTENT, SERVER MEMBERS INTENT, MESSAGE CONTENT INTENT
+2. В настройках Bot включить: PRESENCE INTENT, SERVER MEMBERS INTENT, MESSAGE CONTENT INTENT
+```
+Включить:
+
+PRESENCE INTENT
+SERVER MEMBERS INTENT
+MESSAGE CONTENT INTENT
+```
 
 
-2. Пригласить бота на свой сервер
-
-> Installation:
+3. В настройках Installation
 ```
 Guild install = ON
 
@@ -37,7 +42,7 @@ Scopes: applications.commands, bot
 Permissions: Administrator
 ```
 
-Перейти по ссылке в install Link, добавить бота на сервер
+4. Перейти по ссылке в install Link, добавить бота на сервер
 
 # Запуск в docker compose (готовый образ)
 
@@ -57,7 +62,7 @@ services:
       - .env
 ```
 
-Создать файл .env в папке, где расположен compose.yaml
+Создать файл .env в папке с compose.yaml
 ```
 token=*You Token*
 ```
@@ -88,7 +93,7 @@ docker compose up
 
 Скачать и закинуть в одну из дирректорий PATH (например C:/Windows) или создать свою.
 
-3. Создайте файл .env с токеном
+3. Создайте файл .env с токеном в папке с проектом
 ```
 token=*You Token*
 ```
@@ -106,7 +111,7 @@ sudo apt install ffmpeg screen
 chmod +x startscreen.sh
 ```
 
-3. Создайте файл .env с токеном
+3. Создайте файл .env с токеном в папке с проектом
 
 ```
 token=*You Token*
