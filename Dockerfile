@@ -1,4 +1,4 @@
-﻿#FROM python:slim
+#FROM python:slim
 FROM python:alpine
 WORKDIR /app
 RUN mkdir -p logs/chats
