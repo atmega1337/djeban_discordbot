@@ -5,6 +5,6 @@ RUN mkdir -p logs/chats
 #RUN apt-get update && apt install ffmpeg -y
 RUN apk update && apk add --no-cache ffmpeg opus
 
-COPY . .
+COPY main.py urlyoutube.py startdocker.sh requirements.txt ./
 RUN chmod +x startdocker.sh
 CMD ["./startdocker.sh"]
