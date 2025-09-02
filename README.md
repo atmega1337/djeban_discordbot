@@ -20,7 +20,7 @@
 
 1. [Создать бота](https://discord.com/developers/applications). 
 
-2. В настройках Bot включить: PRESENCE INTENT, SERVER MEMBERS INTENT, MESSAGE CONTENT INTENT
+2. В настройках Bot:
 ```
 Включить:
 
@@ -30,7 +30,7 @@ MESSAGE CONTENT INTENT
 ```
 
 
-3. В настройках Installation
+3. В настройках Installation:
 ```
 Guild install = ON
 
